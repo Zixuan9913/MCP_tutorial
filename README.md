@@ -22,6 +22,8 @@ Before we start, I would like to present the three key components:
 ### Step 1: Cline Installation 
 The first step is to install an MCP client. Cline is one of the easiest MCP clients to use as it is integrated into VS Code. You can just search and download Cline in the extensions marketplace of VS Code:
 
+![Cline](./images/cline.png)
+
 
 
 

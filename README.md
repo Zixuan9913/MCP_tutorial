@@ -36,12 +36,11 @@ First of all, you need to download [Node.js].(http://Node.js) Many MCP servers r
 Then, create a configuration file in the root directory to register our MCP servers. This file instructs the MCP client (Cline) on which servers to load, how to start them, and what credentials are required. ** Don't worry, you can find how to fill it in the official document of each MCP server, and you need to get an api key for each of them.**
 
 In our case, we configured two popular MCP servers: Firecrawl for web crawling, and Gaode Map for location search and transport planning. 
-
-![MCP Server](./images/server_config.png)
+![MCP server](./images/server_config.png)
 
 Once you fill this JSON file, you can check in Cline if they are correctly configured:
 
-![Check MCP](./images/check_server.png)
+![MCP server check](./images/check_server.png)
 
 Now the configuration is done, we can start a chat in Cline to try it out! 
 

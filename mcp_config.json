@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "firecrawl-mcp": {
+      "timeout": 60,
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "firecrawl-mcp"
+      ],
+      "env": {
+        "FIRECRAWL_API_KEY": "your api key"
+      }
+    },
+    "amap-maps": {
+      "timeout": 60,
+      "command": "npx",
+      "args": [
+        "-y",
+        "@amap/amap-maps-mcp-server"
+      ],
+      "env": {
+        "AMAP_MAPS_API_KEY": "your api key"
+      },
+      "type": "stdio"
+    }
+  }
+}

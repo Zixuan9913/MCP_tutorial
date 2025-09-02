@@ -296,7 +296,7 @@ The server simply waits for incoming JSON that matches its declared format, exec
 
 The LLM then reads the results, reasons about them, and continues with the next step until the whole task is complete.
 
-###The Big Picture
+### The Big Picture
 So in short:
 
 - MCP is the protocol that standardizes how LLMs talk to external tools.

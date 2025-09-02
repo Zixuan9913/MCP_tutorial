@@ -1,16 +1,18 @@
-# Trip Planner MCP 
-## Introduction to MCP
+# 🗺️ Trip Planner with MCP + Cline  
+_A practical tutorial on how to configure MCP servers and let LLMs call real tools to plan a trip._
+
+## 📖 Introduction
 This tutorial walks you through configuring MCP servers in VS Code using the [Cline](https://docs.cline.bot/getting-started/installing-cline) extension.
 You’ll learn how to install the tools, set up Node.js, and configure servers like Firecrawl and Gaode Map.
 Most importantly, you will see the mechanism behind all the processes!
 
-## What you will learn
+## 🎯 What You Will Learn
 - What the MCP client is and how it connects LLMs with MCP servers with Cline
 - How to install and set up the environment
 - How to configure MCP servers with API keys
 - Mechanism of MCP with a real use case
 
-## Prerequisites
+## ⚡ Prerequisites
 - VS Code installed
 - API keys for the MCP servers you want to use.
 
@@ -20,12 +22,12 @@ Before we start, I would like to present the three key components:
   3. **MCP Client**: This is the “connector” or port. Its job is to let the LLM talk to MCP servers and to forward requests/responses between them.
   4. **MCP Server**: The tools that really do the job, such as web crawling. It describes to the client what functions it provides, waits for the LLM’s request, and then sends back results.
 
-### Step 1: Cline Installation 
+### 🛠️ Step 1: Install Cline
 The first step is to install an MCP client. Cline is one of the easiest MCP clients to use as it is integrated into VS Code. You can just search and download Cline in the extensions marketplace of VS Code:
 
 ![Cline](./images/cline.png)
 
-### Step 2: Choose your favourite LLM
+### 🤖 Step 2: Choose Your Favorite LLM
 The second step is to configure your LLM. You can choose your preferred LLM from multiple sources (OpenAI, Gemini, Claude, etc.) 
 The fastest way is to get an [OpenRouter](https://openrouter.ai/) API key as they provide free LLMs from families as Deepseek, Qwen, and Mistral, etc. 
 
@@ -33,7 +35,7 @@ The fastest way is to get an [OpenRouter](https://openrouter.ai/) API key as the
 
 
 
-### Step 3: Set up your CMCP server.
+### 🔧 Step 3: Set Up Your MCP Servers
 First of all, you need to download [Node.js].(http://Node.js) Many MCP servers require Node.js to run because most of them are written in JavaScript/TypeScript, and Node.js provides the runtime environment needed to execute these programs.
 
 Then, create a configuration file in the root directory to register our MCP servers. This file instructs the MCP client (Cline) on which servers to load, how to start them, and what credentials are required. ** Don't worry, you can find how to fill it in the official document of each MCP server, and you need to get an api key for each of them.**
@@ -77,7 +79,7 @@ Once you fill this JSON file, you can check in Cline if they are correctly confi
 
 Now the configuration is done, we can start a chat in Cline to try it out! 
 
-## Real Use Case: Planning a One-Day Trip in Haikou City
+## 🌏 Real Use Case: Plan a One-Day Trip in Haikou City, Hainan Island, China
 
 In this example, we will combine two MCP servers to plan a one-day trip in my hometown, Haikou City, in the lovely tropical island of China. 
 
@@ -228,6 +230,7 @@ Example of the returned route plan:
 ```
 This process is repeated until all destinations are connected by an integrated public transit solution.
 In the end, the LLM gathered all the information from the iterations and crafted a one-day trip plan in my city:
+### 📌 Example Travel Plan (LLM Output)
 ```markdown
 # Haikou City Cultural and Historical Attractions Travel Plan
 
@@ -264,7 +267,7 @@ This itinerary ensures you experience the rich cultural and historical heritage 
 ```
 As a local, I have to say, it's a decent plan to explore Haikou City!
 
-## Conclusion: How MCP Works Behind the Scenes?
+## 🧩 How MCP Works Behind the Scenes?
 
 After walking through the Haikou trip planning example, we can clearly see how MCP ties everything together. Let’s revisit the key questions:
 ### 1. What exactly is MCP?
@@ -308,6 +311,16 @@ So in short:
 - The servers are the executors, doing the actual work and returning structured outputs.
 
 That’s why, with only one natural language request, the LLM was able to extract cultural attractions, find coordinates, plan routes, and finally assemble a one-day Haikou itinerary — all by orchestrating multiple MCP servers seamlessly.
+
+### 👉 Now imagine extending MCP to:
+
+Automating research with Firecrawl + custom knowledge bases
+
+Connecting enterprise APIs for reporting
+
+Integrating weather, maps, and booking APIs for a true travel assistant
+
+MCP is not just about calling APIs — it’s about giving your LLM the power to act.
 
 
 

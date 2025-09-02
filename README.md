@@ -1,7 +1,7 @@
 # Trip Planner MCP 
 ## Introduction to MCP
 This tutorial walks you through configuring MCP servers in VS Code using the [Cline](https://docs.cline.bot/getting-started/installing-cline) extension.
-You’ll learn how to install the tools, set up Node.js, and configure servers like Firecrawl and Baidu Map.
+You’ll learn how to install the tools, set up Node.js, and configure servers like Firecrawl and Gaode Map.
 Most importantly, you will see the mechanism behind all the processes!
 
 ## What you will learn
@@ -107,11 +107,13 @@ Our scenario is as follows:
    - What activities to do at each place  
    - How to get from one place to another using public transportation
 
+<img src="./images/travel.png" alt="travel" width="80%"/>
+
 All we need to do is to give a prompt, the LLM will select the best MCP server and its tool to do all the job for us! 
 
 <pre> ```
 Background:
-I am traveling to Haikou city in China, and I am especially interested in cultural and historical attractions.
+I am traveling to Haikou City in China, and I am especially interested in cultural and historical attractions.
 
 Task:
 Extract 3 tourist attractions from a travel website:https://www.chinadiscovery.com/hainan/haikou/things-to-do.html 
@@ -140,23 +142,176 @@ Note: Prefer cultural and historical attractions if possible. Then you select on
 ``` </pre>
 
 ### Model Response
-The LLM immediately decides to call the Firecrawl MCP server and selects the tool "firecrawl_extract
-" from its toolbox. 
-(image)
-This is because, as shown here, in the tool box of each MCP server, each tool has a description of what it is capable for and what kind of paramter it needs to perform the job. The LLM analyse the human request first and look through all the availiable tools to select the one whose description aligns the most to the request. 
+The LLM first analyzes the human request and looks through the available tools from each MCP server. It selects the firecrawl_extract tool from the Firecrawl MCP server, since its description best matches the user’s needs.
 
-Then it generated a request for Firecrawl in JSON format, filling all the parameters needed for the tool. 
+<img src="./images/firecrawl.png" alt="firecrawl" width="80%"/>
 
-Here is exactly the essence of MCP: translating a human request to json request that applicable for all the MCP servers. 
-That´s why in the definition we say, MCP is the port that connects LLM and external tools to aquire information. 
+This is because, as shown here, in the toolbox of each MCP server, each tool has a description of what it is capable of and what kind of parameters it needs to perform the job. The LLM analyzes the human request first and looks through all the available tools to select the one whose description aligns the most with the request. 
 
-The json request will be sent to the selected MCP server once the user confirm the request. Only in a few seconds, we recieved main torist spots in Haikou, each spot has the information we need, just as defined in our schema. 
+It then generates a JSON request for Firecrawl, filling in all required parameters:
 
-Then our brain, the LLM decides to call the next MCP server: Ama map. It decides to search the places to get the coordinates of them. So it first uses the maps_geo tool. After obtaining all the geografic information of the three places, it needs to plan the route by calling a new tool: maps_direction_transit_integrated, which can give public transportation routes when it has coordinates of start point and destination. 
+```json
+{
+  "urls": ["https://www.chinadiscovery.com/hainan/haikou/things-to-do.html"],
+  "prompt": "Extract tourist attractions focusing on cultural and historical places in Haikou city. Provide the following JSON schema: Places to Visit (name), location (Chinese address or landmark, required in Chinese), Description (English description of the place and things to do), Recommend Length of Visiting (time for visit).",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "Places to Visit": { "type": "string" },
+      "location": { "type": "string" },
+      "Description": { "type": "string" },
+      "Recommend Length of Visiting": { "type": "string" }
+    },
+    "required": ["Places to Visit", "location", "Description", "Recommend Length of Visiting"]
+  },
+  "allowExternalLinks": false,
+  "enableWebSearch": false,
+  "includeSubdomains": false
+}
+```
+This illustrates the essence of MCP: translating a human request into a JSON request that can be executed by any MCP server.
 
-As before it generated another JSON request for the tool and our smart map returns a detailed route plan including bus number, how to get to the bus stop, how many stops before getting off, total duration time. 
+The JSON request is sent to Firecrawl, which returns the main tourist attractions in Haikou, each structured according to the defined schema.
+I really like this extract scraping than simple crawling, as you can see, it not only crawls web information but also extracts what you want and returns it in a structured format! 
 
-This process is repeated untill all the places are connected by the transport solution offered by our map MCP. 
+```json
+One of the attractions:
+{
+    "name": "Qilou Old Street",
+    "location": "海口市龙华区得胜沙路到长堤路",
+    "coordinates": "110.347230,20.045266",
+    "Description": "Qilou Old Street, with a total length of 4.4 kilometers and over 600 arcade buildings, showcases the most distinctive street landscape of Haikou City. The buildings were mostly constructed by overseas Chinese returning from abroad in the early 20th century, featuring elegant sculptures and foreign decorations. Sipailou, the oldest building, dates back to the Southern Song Dynasty. The street is also home to Haikou Qilou Snack Street, which offers a variety of local delicacies like Wenchang Chicken and Hainan noodles.",
+    "Recommend Length of Visiting": "1~2 hours"
+  }
+```
+
+Next, the LLM decides to call the Amap MCP server to obtain geographic coordinates of the attractions using the maps_geo tool. Once the locations are retrieved, it plans the public transit route with maps_direction_transit_integrated, which provides detailed instructions including bus numbers, stops, and total duration.
+
+<img src="./images/direction.png" alt="direction" width="80%"/>
+
+Example of the returned route plan:
+
+```json
+"segments": [
+          {
+            "walking": {
+              "origin": "110.347229,20.045259",
+              "destination": "110.344765,20.044636",
+              "distance": "275",
+              "duration": "235",
+              "steps": [
+                {
+                  "instruction": "Walk 145 meters diagonally to the left.",
+                  "road": [],
+                  "distance": "145",
+                  "action": "Walk diagonally to the left.",
+                  "assistant_action": []
+                }
+                ......
+            "bus": {
+                "buslines": [
+                  {
+                    "name": "Route G37 (Train Station → Yucheng Village Bus Terminal)",
+                    "departure_stop": {
+                      "name": "水巷口"
+                    },
+                    "arrival_stop": {
+                      "name": "省林业厅"
+                    },
+                    "distance": "4694",
+                    "duration": "1738",
+                    "via_stops": [
+                      {
+                        "name": "和平桥"
+                      },
+                 .......
+```
+This process is repeated until all destinations are connected by an integrated public transit solution.
+In the end, the LLM gathered all the information from the iterations and crafted a one-day trip plan in my city:
+```markdown
+# Haikou City Cultural and Historical Attractions Travel Plan
+
+## 1. Qilou Old Street
+
+- Description: Qilou Old Street, with a total length of 4.4 kilometers and over 600 arcade buildings, showcases the most distinctive street landscape of Haikou City. The buildings were mostly constructed by overseas Chinese returning from abroad in the early 20th century, featuring elegant sculptures and foreign decorations. Sipailou, the oldest building, dates back to the Southern Song Dynasty. The street is also home to Haikou Qilou Snack Street, offering local delicacies like Wenchang Chicken and Hainan noodles.
+- Recommended Visit Length: 1 to 2 hours
+
+## Route from Qilou Old Street to Wugong Temple
+
+- Walk about 275 meters along 博爱北路 (Bo'ai North Road) to 水巷口 (Shuixiangkou) bus stop.
+- Take bus G37路 from 水巷口 to 省林业厅 (Provincial Forestry Department) stop (approx. 29 minutes).
+- Walk about 92 meters along 海府路 (Haifu Road) to Wugong Temple.
+- Total travel time: Approx. 34 minutes.
+
+## 2. Wugong Temple (Five Official Temple)
+
+- Description: Wugong Temple, also known as 'Hainan First Floor,' is a wooden complex built in memory of five officials deported to Haikou during the Tang and Song dynasties. It provides insights into ancient Chinese relegation rules and the history of Hainan Province. Nearby, Hairui Tomb honors Hai Rui, a respected official of the Ming Dynasty, featuring solemn architecture and stone carvings along the path to the grave.
+- Recommended Visit Length: 1 to 2 hours
+
+## Route from Wugong Temple to Hainan Museum
+
+- Walk about 136 meters along 海府路 to 省林业厅 (Provincial Forestry Department) bus stop.
+- Take bus G51路 from 省林业厅 to 省图书馆 (Provincial Library) stop (approx. 19 minutes).
+- Walk about 650 meters along 国兴大道辅路 (Guoxing Avenue Auxiliary Road) to Hainan Museum.
+- Total travel time: Approx. 32 minutes.
+
+## 3. Hainan Museum
+
+- Description: Hainan Museum is a comprehensive museum showcasing the history and culture of Hainan. It features exhibitions on maritime civilization, Hainan history, and customs, along with displays of cultural relics. The museum is recognized as one of the six most beautiful buildings in Hainan and offers a deep dive into the region's heritage.
+- Recommended Visit Length: 2 hours
+
+This itinerary ensures you experience the rich cultural and historical heritage of Haikou city with efficient public transportation routes and ample time at each attraction for a fulfilling visit.
+```
+As a local, I have to say, it's a decent plan to explore Haikou City!
+
+## Conclusion: How MCP Works Behind the Scenes?
+
+After walking through the Haikou trip planning example, we can clearly see how MCP ties everything together. Let’s revisit the key questions:
+### 1. What exactly is MCP?
+MCP (Model Context Protocol) is the bridge between the LLM and external tools.
+- The LLM is the “brain” that understands your request.
+
+- The MCP Client (like Cline) is the port/connector that forwards requests and responses.
+
+- The MCP Servers are the tools (Firecrawl, Gaode Map, etc.) that actually execute the job and return results.
+
+In our example, Firecrawl served as the web crawler and extractor, while Gaode Map handled geo-coordinates and route planning.
+
+### 2. How does the LLM know which MCP server and tool to use?
+Each MCP server describes its tools in a toolbox-like manifest, including the tool’s capabilities (what it can do) and the parameters it requires.
+When you give a natural language task — e.g., “find cultural attractions in Haikou and plan a public transit route” — the LLM parses the request, checks the tool descriptions, and matches the task to the right tool.
+
+- To extract structured attraction data → it chose firecrawl_extract.
+- To get coordinates → it chose maps_geo.
+- To plan the transit route → it chose maps_direction_transit_integrated.
+
+The LLM doesn’t hardcode which tool to call — it dynamically decides based on the toolbox definitions.
+
+### 3. How does the LLM issue a command, and how does the server understand it?
+Once the LLM selects the tool, it generates a JSON request that matches the schema expected by that tool.
+- Example: a JSON request to Firecrawl specifying the url, prompt, and the schema of data we want.
+- This JSON is sent through the MCP client to the MCP server.
+
+The server simply waits for incoming JSON that matches its declared format, executes the task (e.g., crawl a webpage, search a map, plan a bus route), and returns results — again in structured JSON.
+
+The LLM then reads the results, reasons about them, and continues with the next step until the whole task is complete.
+
+###The Big Picture
+So in short:
+
+- MCP is the protocol that standardizes how LLMs talk to external tools.
+
+- The LLM acts as the planner, deciding what needs to be done.
+
+- The client is the connector, routing requests/responses.
+
+- The servers are the executors, doing the actual work and returning structured outputs.
+
+That’s why, with only one natural language request, the LLM was able to extract cultural attractions, find coordinates, plan routes, and finally assemble a one-day Haikou itinerary — all by orchestrating multiple MCP servers seamlessly.
+
+
+
+
 
 
 

@@ -1,4 +1,4 @@
-# 🗺️ Trip Planner with MCP + Cline  
+# 🗺️ Build a Trip Planner with MCP + Cline (Step-by-Step Tutorial)
 _A practical tutorial on how to configure MCP servers and let LLMs call real tools to plan a trip._
 
 ## 📖 Introduction
@@ -36,11 +36,11 @@ The fastest way is to get an [OpenRouter](https://openrouter.ai/) API key as the
 
 
 ### 🔧 Step 3: Set Up Your MCP Servers
-First of all, you need to download [Node.js].(http://Node.js) Many MCP servers require Node.js to run because most of them are written in JavaScript/TypeScript, and Node.js provides the runtime environment needed to execute these programs.
+First of all, you need to download [Node.js](http://Node.js) Many MCP servers require Node.js to run because most of them are written in JavaScript/TypeScript, and Node.js provides the runtime environment needed to execute these programs.
 
 Then, create a configuration file in the root directory to register our MCP servers. This file instructs the MCP client (Cline) on which servers to load, how to start them, and what credentials are required. ** Don't worry, you can find how to fill it in the official document of each MCP server, and you need to get an api key for each of them.**
 
-In our case, we configured two popular MCP servers: Firecrawl for web crawling, and Gaode Map for location search and transport planning. 
+In our case, we configured two popular MCP servers: Firecrawl for web crawling, and Gaode Map (whose MCP server is called amap-maps) for location search and transport planning. 
 
 ```json
 {
@@ -140,7 +140,7 @@ Note: Prefer cultural and historical attractions if possible. Then you select on
    - Attraction name + things_to_do
    - Route details between attractions with public transportation
    - Full, readable itinerary with cultural highlights
-  - You should organize my day with a plan to make sure I have a good time in Hiakou City
+  - You should organize my day with a plan to make sure I have a good time in Haikou City
 ``` </pre>
 
 ### Model Response

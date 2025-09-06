@@ -40,7 +40,9 @@ First of all, you need to download [Node.js](http://Node.js) Many MCP servers re
 
 Then, create a configuration file in the root directory to register our MCP servers. This file instructs the MCP client (Cline) on which servers to load, how to start them, and what credentials are required. ** Don't worry, you can find how to fill it in the official document of each MCP server, and you need to get an api key for each of them.**
 
-In our case, we configured two popular MCP servers: Firecrawl for web crawling, and Gaode Map (whose MCP server is called amap-maps) for location search and transport planning. 
+In our case, we configured two popular MCP servers: Firecrawl for web crawling, and Gaode Map (whose MCP server is called amap-maps) for location search and transport planning in China.
+You can definitely choose Google Maps MCP as an alternative! 
+
 
 ```json
 {
@@ -323,6 +325,9 @@ Integrating weather, maps, and booking APIs for a true travel assistant
 MCP is not just about calling APIs — it’s about giving your LLM the power to act.
 
 
+References
+https://youtu.be/McNRkd5CxFY?si=-W-qs9bPq6hd6Llz
+https://github.com/mendableai/firecrawl-mcp-server?tab=readme-ov-file
 
 
 

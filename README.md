@@ -328,6 +328,7 @@ MCP is not just about calling APIs — it’s about giving your LLM the power to
 References
 https://youtu.be/McNRkd5CxFY?si=-W-qs9bPq6hd6Llz
 https://github.com/mendableai/firecrawl-mcp-server?tab=readme-ov-file
+https://youtu.be/2GHRDoFquOo?si=R4vWZFzzrfaQwQMK
 
 
 
